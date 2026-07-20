@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
+import dev.langchain4j.model.chat.request.json.JsonStringSchema;
 import io.quarkiverse.langchain4j.runtime.ToolsRecorder;
 import io.quarkiverse.langchain4j.runtime.tool.ToolMethodCreateInfo;
 import io.quarkus.test.QuarkusUnitTest;
@@ -50,6 +52,13 @@ public class ToolSpecificationTest {
         }
     }
 
+    public static class UuidTool {
+        @Tool("Tool with a UUID parameter")
+        public void toolCall(UUID id) {
+
+        }
+    }
+
     public static class MetadataTool {
         @Tool(name = "metadataTool", value = "Tool with metadata", metadata = "{\"foo\": \"bar\", \"baz\": 123}")
         public void toolCall() {
@@ -78,6 +87,16 @@ public class ToolSpecificationTest {
         assertThat(schema.properties().get("baseField")).isNotNull();
         assertThat(schema.properties().get("staticBaseField")).isNull();
         assertThat(schema.properties().get("ignoredBaseField")).isNull();
+    }
+
+    @Test
+    void testUuidMapsToStringSchema() {
+        List<ToolMethodCreateInfo> methodCreateInfos = ToolsRecorder.getMetadata().get(UuidTool.class.getName());
+        assertNotNull(methodCreateInfos);
+        assertThat(methodCreateInfos).hasSize(1);
+
+        ToolSpecification toolSpecification = methodCreateInfos.get(0).toolSpecification();
+        assertThat(toolSpecification.parameters().properties().get("id")).isInstanceOf(JsonStringSchema.class);
     }
 
     @Test

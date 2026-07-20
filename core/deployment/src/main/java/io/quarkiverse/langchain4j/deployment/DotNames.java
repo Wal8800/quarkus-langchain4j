@@ -57,6 +57,7 @@ public class DotNames {
     public static final DotName STRING = DotName.createSimple(String.class);
     public static final DotName URI = DotName.createSimple(java.net.URI.class);
     public static final DotName URL = DotName.createSimple(java.net.URL.class);
+    public static final DotName UUID = DotName.createSimple(java.util.UUID.class);
     public static final DotName LIST = DotName.createSimple(List.class);
     public static final DotName SET = DotName.createSimple(Set.class);
     public static final DotName MULTI = DotName.createSimple(Multi.class);

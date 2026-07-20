@@ -915,6 +915,12 @@ public class ToolProcessor {
             return JsonStringSchema.builder().description(description).build();
         }
 
+        if (DotNames.UUID.equals(typeName)) {
+            return JsonStringSchema.builder()
+                    .description(description != null ? description : "String in a UUID format")
+                    .build();
+        }
+
         // TODO something else?
         if (type.kind() == Type.Kind.ARRAY || DotNames.LIST.equals(typeName) || DotNames.SET.equals(typeName)) {
             ParameterizedType parameterizedType = type.kind() == Type.Kind.PARAMETERIZED_TYPE ? type.asParameterizedType()
